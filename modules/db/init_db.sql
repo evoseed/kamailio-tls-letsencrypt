@@ -82,10 +82,6 @@ SET row_security = off;
 --
 
 --
--- Database "sipflare" dump
---
-
---
 -- PostgreSQL database dump
 --
 

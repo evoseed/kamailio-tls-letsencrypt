@@ -8,7 +8,7 @@ Kamailio in docker container with TLS enabled using Let's Encrypt.
 
 The purpose of the code in this project is to provide a simple way to deploy a Kamailio server in a docker container with TLS enabled using Let's Encrypt.
 
-Thanks to Fred Posner's [article](https://www.fredposner.com/1836/kamailio-tls-and-letsencrypt/) I've understud that there are 2 ways to deal with TLS in Kamailio:
+Thanks to Fred Posner's [article](https://www.fredposner.com/1836/kamailio-tls-and-letsencrypt/) I've understood that there are 2 ways to deal with TLS in Kamailio:
 
 *quoting Fred Posner*:
 
@@ -31,7 +31,7 @@ I wrote this article and created this repository to take a step forward from Fre
 Fred explains how to install Let's Encrypt and create a certificate (using `letsencrypt-auto`, which unfortunately is no longer supported) and how to configure the certificate in kamailio.
 I want to go one step further and explain how to have a `recipe` and a ready-to-use `docker-compose` that allows you to:
 
-- pre-configure the TLS certificate for our domain
+- pre-configure the TLS certificate for your domain
 - pre-configure kamailio to use the certificate
 - have a container that checks the validity of the certificate and autonomously performs the renewal when necessary
 - have, ready-to-use, an nginx reverse proxy that uses the certificate: `HTTP 80 -> HTTPS`
@@ -51,11 +51,11 @@ I want to go one step further and explain how to have a `recipe` and a ready-to-
 ### Step to deploy
 
 1. clone the repository in your deploy machine
-    `git clone https://github.com/tommasinigiovanni/kamailio-tls-letsencrypt .`
+    `git clone https://github.com/evoseed/kamailio-tls-letsencrypt .`
 1. pre-configure the TLS certificate for our domain
     - [Install docker-compose](https://docs.docker.com/compose/install/#install-compose).
     - Modify configuration of nginx
-        Of course change `your.domain.com` with you real domain and change `1.2.3.3` with your real IP address.
+        Of course change `your.domain.com` with you real domain and change `1.2.3.4` with your real IP address.
 
         - **Linux users**
 
@@ -77,13 +77,32 @@ I want to go one step further and explain how to have a `recipe` and a ready-to-
 
     - Run the init script and follow the Let's encrypt instructions:
         `./init-letsencrypt.sh`
-        :warning: It's quite important to compile correctly the conf in this way; in particolar `Organization Name` and `Common Name` with your domain
+        :warning: It's quite important to compile correctly the conf in this way; in particular `Organization Name` and `Common Name` with your domain
 
 1. return in the root of the project and compile the `.env` file following the `env-template` file
     `cd ../../.. && cp env-template .env` and complete the `.env` file
 
 1. start all the containers
     `docker-compose up -d`
+
+---
+
+### The running project
+
+When everything has started, what you will see is more or less this:
+
+```bash
+CONTAINER ID   IMAGE                    COMMAND                  CREATED       STATUS       PORTS     NAMES
+48838aee0057   kamailio-test_kamailio   "/etc/kamailio/boots…"   2 hours ago   Up 1 hour                kamailio
+8103e16bd845   kamailio-test_db         "docker-entrypoint.s…"   2 hours ago   Up 1 hour                db
+e212e6c8241f   certbot/certbot          "/bin/sh -c 'trap ex…"   2 hours ago   Up 1 hour                certbot
+3c101597b160   nginx:1.15-alpine        "/bin/sh -c 'while :…"   2 hours ago   Up 1 hour                nginx
+```
+
+The `kamailio` container, your SIP Server  
+the `db` container  
+the `nginx` container as reverse proxy for HTTP to HTTPS
+and the `certbot` container who will check every 12 hours whether certificates are still valid or need to be renewed (and will renew them independently if necessary)
 
 ---
 
@@ -129,10 +148,15 @@ I want to go one step further and explain how to have a `recipe` and a ready-to-
 
     This happens because Let's Encrypt need to test if you are the admin of the domain.
 
+1. How is the creation of certificates and their use automated in kamailio?
+
+    As you can see in the `docker-compose.yaml` file, the `certbot` container and the `kamailio` container mount both volumes with the same source directory: `./module/nginx/nginx-certbot/data/certbot/conf/`.
+    So the `certbot` create (and renew) the certificates and `kamailio` use them.
+
 ---
 
 ### Thanks to
 
 - [Fred Posner](https://www.fredposner.com) for your [article](https://www.fredposner.com/1836/kamailio-tls-and-letsencrypt/)
-- [Kamailio](https://www.kamailio.org/w/) SIP Server and all you community
+- [Kamailio](https://www.kamailio.org/w/) SIP Server and all your community
 - [Philipp Schmieder](https://github.com/wmnnd) for your [nginx-certbot](https://github.com/wmnnd/nginx-certbot) repo

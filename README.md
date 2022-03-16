@@ -4,7 +4,7 @@ Kamailio in docker container with TLS enabled using Let's Encrypt.
 
 ---
 
-# The idea and the purpose
+## The idea and the purpose
 
 The purpose of the code in this project is to provide a simple way to deploy a Kamailio server in a docker container with TLS enabled using Let's Encrypt.
 
@@ -129,7 +129,7 @@ I want to go one step further and explain how to have a `recipe` and a ready-to-
 
     This happens because Let's Encrypt need to test if you are the admin of the domain.
 
---- 
+---
 
 ### Thanks to
 

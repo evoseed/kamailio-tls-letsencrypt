@@ -1,0 +1,8 @@
+DOMAIN=your.domain.com
+IP=1.2.3.4
+PG_USER=kamailio
+PG_PASS=password
+PG_HOST=localhost
+PG_PORT=5432
+PG_DATABASE=kamailio
+POSTGRES_PASSWORD=password

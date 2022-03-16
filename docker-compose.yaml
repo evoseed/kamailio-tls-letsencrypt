@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+    db:
+        build:
+          context: ./modules/db
+          dockerfile: Dockerfile
+        container_name: db
+        command: postgres -c 'max_connections=1000'
+        restart: unless-stopped
+        network_mode: host
+        env_file:
+          - .env
+        volumes:
+          - ./module/db/data/:/var/lib/postgresql/data
+
+    kamailio:
+        build:
+          context: ./modules/kamailio
+          dockerfile: Dockerfile
+        container_name: kamailio
+        restart: unless-stopped
+        network_mode: host
+        env_file:
+          - .env
+        volumes:
+          - ./module/nginx/nginx-certbot/data/certbot/conf/:/etc/letsencrypt/
+        depends_on: 
+          - db
+
+    nginx:
+      image: nginx:1.15-alpine
+      container_name: nginx
+      restart: unless-stopped
+      network_mode: host
+      volumes:
+        - ./module/nginx/nginx-certbot/data/nginx:/etc/nginx/conf.d
+        - ./module/nginx/nginx-certbot/data/certbot/conf:/etc/letsencrypt
+        - ./module/nginx/nginx-certbot/data/certbot/www:/var/www/certbot
+      command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+    certbot:
+      image: certbot/certbot
+      container_name: certbot
+      restart: unless-stopped
+      network_mode: host
+      volumes:
+        - ./module/nginx/nginx-certbot/data/certbot/conf:/etc/letsencrypt
+        - ./module/nginx/nginx-certbot/data/certbot/www:/var/www/certbot
+      entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

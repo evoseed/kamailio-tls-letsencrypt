@@ -2,6 +2,8 @@
 
 Kamailio in docker container with TLS enabled using Let's Encrypt.
 
+You can also find this `README` in this [blog post](https://blog.giovannitommasini.info/voip-calls-and-tls-security).
+
 ---
 
 ## The idea and the purpose
@@ -160,3 +162,4 @@ and the `certbot` container who will check every 12 hours whether certificates a
 - [Fred Posner](https://www.fredposner.com) for your [article](https://www.fredposner.com/1836/kamailio-tls-and-letsencrypt/)
 - [Kamailio](https://www.kamailio.org/w/) SIP Server and all your community
 - [Philipp Schmieder](https://github.com/wmnnd) for your [nginx-certbot](https://github.com/wmnnd/nginx-certbot) repo
+

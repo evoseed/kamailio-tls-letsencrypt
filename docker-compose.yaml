@@ -26,6 +26,7 @@ services:
           - .env
         volumes:
           - ./modules/nginx/nginx-certbot/data/certbot/conf/:/etc/letsencrypt/
+          - ./modules/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg
         depends_on:
           - db
 

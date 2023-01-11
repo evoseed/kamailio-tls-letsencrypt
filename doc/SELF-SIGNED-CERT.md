@@ -58,8 +58,14 @@
 1. give to customers the certificate
 
     Customer has to set this certificate in their client: `your.domain.com.io-calist.pem`
-    *F.e.* using Linphone on MacOS using this command:
+    *F.e.* using `Linphone` on MacOS using this command:
 
     ```bash
     cat your.domain.com.io-calist.pem >> /Applications/Linphone.app/Contents/Resources/share/linphone/rootca.pem
+    ```
+    
+    *F.e.* using `Telephone` on MacOS using this command:
+
+    ```bash
+    cat your.domain.com.io-calist.pem >> /Applications/Telephone.app/Contents/Resources/PublicCAs.pem
     ```
